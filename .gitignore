@@ -1,3 +1,4 @@
 *-complete.pdf
 *.json
 *.p12
+*.pyc
