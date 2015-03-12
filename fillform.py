@@ -7,21 +7,7 @@ firebase = firebase.FirebaseApplication('https://electionhack.firebaseio.com', N
 result = firebase.get('/forms/testform', None)
 
 stuff = {
-    #'addr_city': '',
-    #'addr_first': '',
-    #'addr_second': '',
-    #'firstname': '',
-    #'DoB_d': '',
-    #'DoB_m': '',
-    #'DoB_y': '',
-    #'commonforename': '',
-    #'commonsurname': '',
-    #'othernames': '',
-    #'surname': '',
-    #'addr_postcode': '',
-    #'email': '',
     'election_date': '07/05/2015',
-    #'constituency': '',
     'today': date.today().strftime('%d/%m/%Y')
 }
 
