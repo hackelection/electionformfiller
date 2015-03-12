@@ -1,32 +1,68 @@
 from firebase import firebase
+from docx import Document
+from datetime import date
+import re
 
 #**************AUTHENTICATION IS NEEDED TO MAKE SURE ONLY WE CAN READ THIS
 firebase = firebase.FirebaseApplication('https://electionhack.firebaseio.com', None)
 result = firebase.get('/forms/testform', None)
-print result
 
-from pyPdf import PdfFileWriter, PdfFileReader
-import StringIO
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
+stuff = {
+    'addr_city': '',
+    'addr_first': '',
+    'addr_second': '',
+    'firstname': '',
+    'DoB_d': '',
+    'DoB_m': '',
+    'DoB_y': '',
+    'commonforename': '',
+    'commonsurname': '',
+    'othernames': '',
+    'surname': '',
+    'addr_postcode': '',
+    'email': '',
+    'election_date': '07/05/2015',
+    'constituency': '',
+    'today': date.today().strftime('%d/%m/%Y')
+}
 
-packet = StringIO.StringIO()
-# create a new PDF with Reportlab
-can = canvas.Canvas(packet, pagesize=letter)
-can.drawString(10, 100, "Hello world")
-can.save()
+stuff.update(result);
 
-#move to the beginning of the StringIO buffer
-packet.seek(0)
-new_pdf = PdfFileReader(packet)
-# read your existing PDF
-existing_pdf = PdfFileReader(file("template.pdf", "rb"))
-output = PdfFileWriter()
-# add the "watermark" (which is the new pdf) on the existing page
-page = existing_pdf.getPage(0)
-page.mergePage(new_pdf.getPage(0))
-output.addPage(page)
-# finally, write "output" to a real file
-outputStream = file("testform-complete.pdf", "wb")
-output.write(outputStream)
-outputStream.close()
+##turn keys into placeholders
+templateStuff = dict(('XXX%sXXX' % k, str(v)) for (k, v) in stuff.iteritems())
+
+
+infile = 'nominationpapers.docx'
+outfile = 'testform-complete.docx'
+
+def multiple_find(vals, text):
+    """ find any of the dictionary keys in the text""" 
+
+    # Create a regular expression  from the dictionary keys
+    regex = re.compile("(%s)" % "|".join(map(re.escape, vals.keys())))
+
+    # For each match, look-up corresponding value in dictionary
+    return regex.search(text) 
+
+def multiple_replace(vals, text): 
+
+    """ Replace in 'text' all occurences of any key in the given
+    dictionary by its corresponding value.  Returns the new tring.""" 
+
+    # Create a regular expression  from the dictionary keys
+    regex = re.compile("(%s)" % "|".join(map(re.escape, vals.keys())))
+
+    # For each match, look-up corresponding value in dictionary
+    return regex.sub(lambda mo: vals[mo.string[mo.start():mo.end()]], text) 
+
+form = Document('nominationpapers.docx')
+for table in form.tables:
+    for row in table.rows:
+        for cell in row.cells:
+            for paragraph in cell.paragraphs:
+                text = paragraph.text
+                if multiple_find(templateStuff, text):
+                    paragraph.clear()
+                    paragraph.add_run(text=multiple_replace(templateStuff, text))
+
+form.save('testform.docx')
