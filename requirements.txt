@@ -13,15 +13,12 @@ itsdangerous==0.24
 Jinja2==2.7.3
 lxml==3.4.2
 MarkupSafe==0.23
-mercurial==3.0.2
 numpy==1.9.1
 oauth2client==1.4.6
 Pillow==2.7.0
 pyasn1==0.1.7
 pyasn1-modules==0.0.5
 pydub==0.9.5
-python-docx==0.8.5
-python-firebase==1.2
 python-gflags==2.0
 pyzmq==14.3.1
 requests==1.1.0
