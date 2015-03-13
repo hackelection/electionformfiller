@@ -1,2 +1,2 @@
-git://github.com/heroku/heroku-buildpack-python.git
-git://github.com/RobotsAndPencils/heroku-buildpack-pdftk.git
+https://github.com/heroku/heroku-buildpack-python.git
+https://github.com/RobotsAndPencils/heroku-buildpack-pdftk.git
